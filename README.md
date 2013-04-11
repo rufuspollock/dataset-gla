@@ -16,7 +16,7 @@ That site states:
 
 There are 61 CSV files as of March 2013 (a list can be found in scrape.json").
 
-Unfortunately the "format" varies substantially, not only in terms of fields but in e.g. presence of absence of blank lines etc etc.
+Unfortunately the "format" varies substantially, not only in terms of fields but in e.g. number of blank columns or blank lines etc etc.
 
 * 2008 (Apr-Dec): Monthly files, amount over £1000
   * Fields: Supplier, Expense, Amount
@@ -39,7 +39,8 @@ Aside: from the presence of "SAP Document No" field in several of the CSVs it ap
 
 * Bad file for [Period 8 2012/13 (13 October - 10 November)](http://www.london.gov.uk/sites/default/files/Mayor's%20250%20Report%20-%202012-13%20-%20P8%20%20-%20Final.csv).  The file is not named in the usual way "Mayor's%20250%20Report%20-%202012-13%20-%20P8%20%20-%20Final.csv" and appears to be an Excel file that was not converted to CSV!
 * Amounts are formatted with "," making them appear as strings to computers.
-* Dates vary substantially in format from "16 Mar 2011" in [this file](http://static.london.gov.uk/gla/expenditure/docs/2010-11-P13-500.csv) to 
+* Dates vary substantially in format from "16 Mar 2011" in [this file](http://static.london.gov.uk/gla/expenditure/docs/2010-11-P13-500.csv) to "21.01.2010" in [January 2010 data](http://legacy.london.gov.uk/gla/expenditure/docs/january_2010.csv)
+* Use of (978) to indicate negative amounts rather than -978
 
 ## Plan
 
