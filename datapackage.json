@@ -1,0 +1,52 @@
+{
+  "name": "os-gb-local-gla",
+  "title": "Greater London Authority (GLA) Spending",
+  "licenses": [
+    {
+      "url": "http://opendatacommons.org/licenses/pddl/1.0/", 
+      "name": "Public Domain Dedication and License"
+    }
+  ], 
+  "sources": [{
+    "web": "http://www.london.gov.uk/mayor-assembly/gla/spending-money-wisely/budget-expenditure-charges/expenditure-over-250"
+  }],
+  "resources": [
+    {
+      "sources": [{
+        "web": "http://static.london.gov.uk/gla/expenditure/docs/2012-13-P11-250.csv"
+      }],
+      "schema": {
+        "fields": [
+          {
+            "type": "string", 
+            "id": "Vendor ID"
+          }, 
+          {
+            "type": "string", 
+            "id": "Vendor Name"
+          }, 
+          {
+            "type": "string", 
+            "id": "Cost Element"
+          }, 
+          {
+            "type": "string", 
+            "id": "Expenditure Account Code Description"
+          }, 
+          {
+            "type": "string", 
+            "id": "Document No"
+          }, 
+          {
+            "type": "string", 
+            "id": "Amount"
+          }, 
+          {
+            "type": "string", 
+            "id": "Clearing Date"
+          }
+        ]
+      }
+    }
+  ]
+}
