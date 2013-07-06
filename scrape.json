@@ -1,10 +1,13 @@
 {
   "listurl": "http://www.london.gov.uk/mayor-assembly/gla/spending-money-wisely/budget-expenditure-charges/expenditure-over-250",
   "sources": [
+    "http://www.london.gov.uk/sites/default/files/Mayor%27s%20250%20Report%20-%202013-14%20-%20P1%20%20-%20Combined.csv",
+    "http://static.london.gov.uk/gla/expenditure/docs/2012-13-P13-250.csv",
+    "http://static.london.gov.uk/gla/expenditure/docs/2012-13-P12-250.csv",
     "http://static.london.gov.uk/gla/expenditure/docs/2012-13-P11-250.csv",
     "http://static.london.gov.uk/gla/expenditure/docs/2012-13-P10-250.csv",
     "http://static.london.gov.uk/gla/expenditure/docs/2012-13-P9-250.csv",
-    "http://www.london.gov.uk/sites/default/files/Mayor's%20250%20Report%20-%202012-13%20-%20P8%20%20-%20Final.csv",
+    "http://static.london.gov.uk/gla/expenditure/docs/2012-13-P8-250.csv",
     "http://static.london.gov.uk/gla/expenditure/docs/2012-13-P7-250.csv",
     "http://static.london.gov.uk/gla/expenditure/docs/2012-13-P6-250.csv",
     "http://static.london.gov.uk/gla/expenditure/docs/2012-13-P5-250.csv",
