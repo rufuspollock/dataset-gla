@@ -17,7 +17,7 @@ var info = JSON.parse(fs.readFileSync('scrape.json'));
 function main() {
   var indir = 'archive/latest';
   var outdir = 'tmp/clean';
-  // info.sources = info.sources.slice(1,20);
+  // info.sources = info.sources.slice(1,30);
   info.sources.forEach(function(url) {
     var name = path.basename(url);
     var src = path.join(indir, name);
@@ -26,7 +26,7 @@ function main() {
       //  bad data (html file rather than csv!)
       return;
     }
-    console.log(name);
+    // console.log(name);
     csv()
       .from(src)
       .to(dest)
@@ -34,94 +34,26 @@ function main() {
         if (idx == 0) {
           return headings;
         }
-        var mapfunc = fixer[name];
-        if (!mapfunc) {
-          return [];
-        }
         try {
-          return mapfunc(row, idx, name);
+          return cleanupRow(row, idx, name);
         } catch(e) {
+          console.log(name + ':' + idx);
           console.log(e);
           console.log(row);
-          console.log(name + ':' + idx);
         }
       })
       .on('error', function(e) {
         console.error('*** ERROR with ' + name);
         console.error(e);
       })
+      .on('end', function(e) {
+        // console.log('Done: ' + name);
+      });
       ;
   });
 }
 
-var fixer = {
-  'Mayor%27s%20250%20Report%20-%202013-14%20-%20P1%20%20-%20Combined.csv': std,
-  '2012-13-P13-250.csv': std,
-  '2012-13-P12-250.csv': std,
-  '2012-13-P11-250.csv': std,
-  '2012-13-P10-250.csv': std,
-  '2012-13-P9-250.csv': std,
-  '2012-13-P8-250.csv': std,
-  '2012-13-P7-250.csv': std,
-  '2012-13-P6-250.csv': std,
-  '2012-13-P5-250.csv': std,
-  '2012-13-P4-250.csv': std,
-  '2012-13-P3-250.csv': std,
-  '2012-13-P2-250.csv': std,
-  '2012-13-P1-500.csv': std,
-  '2011-12-P13-500.csv': std,
-  '2011-12-P12-500.csv': std,
-  '2011-12-P11-500.csv': std,
-  'Mayors500Report-2011-12-P10-Final.csv': std,
-  'Mayors-500-report2011-12-P9.csv': std,
-  '2011-12-P8-500.csv': std,
-  '2011-12-P7-500.csv': std,
-  '2011-12-P6-500.csv': std,
-  '2011-12-P5-500.csv': std,
-  '2011-12-P4-500.csv': std,
-  '2011-12-P3-500.csv': std,
-  '2011-12-P2-500.csv': std,
-  '2011-12-P1-500.csv': std,
-  '2010-11-P13-500.csv': std,
-  '2010-11-P12-500.csv': std,
-  '2010-11-P11-500.csv': std,
-  '2010-11-P10-500.csv': std,
-  '2010-11-P09-500.csv': std,
-  '2010-11-P08-500.csv': std,
-  '2010-11-P07-500.csv': std,
-  '2010-11-P06-500.csv': std,
-  '2010-11-P05-500.csv': std,
-  '2010-11-P04-500.csv': std,
-  '2010-11-P03.csv': std,
-  '2010-11-P02.csv': std,
-  '2010-11-P01.csv': std,
-  'P13-2009-10.csv': std,
-  'P12- 2009_10_FINAL.csv': std,
-  'january_2010.csv': std,
-  'december_2009.csv': std,
-  'november_2009.csv': std,
-  'october_2009.csv': std,
-  'september_2009.csv': std,
-  'august_2009.csv': std,
-  'july_2009.csv': std,
-  'june_2009.csv': std,
-  'may_2009.csv': std,
-  'april_2009.csv': std,
-  'march_2009.csv': std,
-  'february_2009.csv': std,
-  'january_2009.csv': std,
-  'december_2008.csv': std,
-  'november_2008.csv': std,
-  'october_2008.csv': std,
-  'september_2008.csv': std,
-  'august_2008.csv': std,
-  'july_2008.csv': std,
-  'june_2008.csv': std,
-  'may_2008.csv': std,
-  'april_2008.csv': std
-}
-
-function std(row, idx, name) {
+function cleanupRow(row, idx, name) {
   // skip rows until the header row
   // startline info extracted separately
   if (idx < info.startline[name]) return null;
@@ -131,24 +63,110 @@ function std(row, idx, name) {
   if (name == '2012-13-P4-250.csv') {
     if (idx > 865) return null;
   }
+  // yup, this one randomly adds a column with no header and then a blank line!
+  if (name === 'january_2010.csv') {
+    row = row.slice(2);
+  }
 
+  // strip leading blank columns
   while(row[0] == '') {
     row = row.slice(1);
   }
+  idx = 0;
+  while(row[idx] != '' && idx < row.length) {
+    idx++;
+  }
+  row = row.slice(0, idx);
+
+  // ignore empty rows
   if (row[0]==='' || row.length < 3 || row[1] == '') return null;
 
-  return fixFields(row);
+  // 6 types of col structure
+  //
+  // 7 cols: Vendor ID,Vendor Name,Cost Element,Expenditure Account Code Description,SAP Document No,Amount £,Clearing Date
+  // 6 cols: Supplier Name, Expense Description, Amount, Doc Type, Doc No, Date
+  // 5 cols: Supplier,Expense Description,Amount,Doc Type,Doc No
+  // e.g. http://datapipes.okfnlabs.org/csv/html/?url=http://legacy.london.gov.uk/gla/expenditure/docs/july_2009.csv
+  // 4 cols: Vendor,Expense Description,Amount,Doc No
+  //    2010-11-P01.csv
+  // 3 cols: Supplier,Expense Description,Amount
+  // 3 cols: Vendor, Expense Description, Amount
+
+  // we output to headings structure (see above)
+  //    var headings = [
+  //      'Vendor ID',
+  //      'Vendor Name',
+  //      'Cost Element',
+  //      'Expenditure Account Code Description',
+  //      'Document No',
+  //      'Amount',
+  //      'Date'
+  //      ]
+  if (row.length === 3 || row.length === 4 || row.length === 5) {
+    // we have to parse the name for the date
+    // of form "month_yyyy" except for P13-2009-10.csv
+    nameToDateMap = {
+      'P13-2009-10.csv': '2009-10-01',
+      '2010-11-P01.csv': '2010-04-01',
+      '2010-11-P02.csv': '2010-05-01',
+      // horrific - Period 12 (7 Feb 2010 - 6 Mar 2010)
+      'P12- 2009_10_FINAL.csv': '2010-03-01',
+      // (7 Mar 2010 - 31 Mar 2010)
+      'P13-2009-10.csv': '2010-03-18'
+    }
+    if (name in nameToDateMap) {
+      var date = nameToDateMap[name];
+    } else {
+      // toISOString sometimes offsets back a day ...
+      // new Date('01 August 2012') => Aug 01 2012 00:00:00 GMT+0100 (BST)
+      // toISOString() of that => 2012-07-31T... !!
+      var date = new Date('02 ' + name.replace('_', ' ').replace('.csv', '')).toISOString().slice(0,10);
+    }
+    if (row.length === 3) {
+      row = [ '', row[0], '', row[1], '', row[2], date ];
+    } else if (row.length === 4) {
+      row = [ '', row[0], '', row[1], row[3], row[2], date ];
+    } else {
+      // only one CSV like this - july_2009
+      // http://datapipes.okfnlabs.org/csv/html/?url=http://legacy.london.gov.uk/gla/expenditure/docs/july_2009.csv
+      // we will ignore Doc Type (seems to always be PLIN or PLCN ...)
+      row = [ '', row[0], '', row[1], row[4], row[2], date ];
+    }
+  } else if (row.length === 6) {
+    // 6 cols: Supplier Name, Expense Description, Amount, Doc Type, Doc No, Date
+    row = [ '', row[0], '', row[1], row[4], row[2], row[5] ];
+  }
+
+  try {
+    var row = fixFields(row);
+    return row;
+  } catch (e) {
+    console.log('here');
+    console.log(name + ':' + idx);
+    console.log(e);
+    console.log(row);
+    return null;
+  }
 }
 
 function fixFields(row) {
   // fix amount field
-  row[5] = row[5].replace(/,/g, '');
+  row[5] = row[5].replace(/,/g, '').replace(/ /g, '');
   // -ve amounts. (978) => -978
   if (row[5].indexOf('(') != -1) {
     row[5] = '-' + row[5].replace('(', '').replace(')', '');
   }
+
   // fix date field
-  row[6] = new Date(row[6]).toISOString().slice(0,10);
+  // if '/' in date then like 18/11/2009 and we must normalize to mm/dd/yyyy
+  // january_2010.csv:6 has 24.12.2012
+  row[6] = row[6].replace(/\./g, '/');
+  if (row[6].indexOf('/') != -1) {
+    var date = new Date(row[6].replace( /(\d{2})\/(\d{2})\/(\d{4})/, "$3-$2-$1") );
+  } else {
+    var date = new Date(row[6]);
+  }
+  row[6] = date.toISOString().slice(0,10);
   return row;
 }
 

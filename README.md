@@ -6,14 +6,7 @@ See also this blog post <http://schoolofdata.org/2013/03/26/using-sql-for-lightw
 
 ## Data
 
-There are ~ 3 headings types (with additional variations and with various columns or not)
-
-Vendor ID,Vendor Name,Cost Element,Expenditure Account Code Description,SAP Document No,Amount £,Clearing Date
-
-Variations:
-
-* Vendor ID,Vendor Name,Cost Element,Expenditure Account Code Description,SAP Document No,Amount £,Clearing Date
-
+See data/consolidated.csv for the schema see datapackage.json.
 
 ## Data Preparation
 
