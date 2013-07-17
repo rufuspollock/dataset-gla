@@ -12,39 +12,46 @@
   }],
   "resources": [
     {
-      "url": "http://data.openspending.org/datasets/gb-local-gla/data/2013-jan.csv",
-      "sources": [{
-        "web": "http://static.london.gov.uk/gla/expenditure/docs/2012-13-P11-250.csv"
-      }],
+      "path": "data/consolidated.csv",
       "schema": {
         "fields": [
           {
-            "type": "string", 
-            "id": "Vendor ID"
+            "type": "integer", 
+            "primarykey": true,
+            "id": "ID"
+          }, 
+          {
+            "type": "integer", 
+            "id": "VendorID"
           }, 
           {
             "type": "string", 
-            "id": "Vendor Name"
+            "id": "Vendor"
           }, 
           {
             "type": "string", 
-            "id": "Cost Element"
+            "id": "AccountCode"
           }, 
           {
             "type": "string", 
-            "id": "Expenditure Account Code Description"
+            "id": "AccountDescription"
           }, 
           {
-            "type": "string", 
-            "id": "Document No"
+            "type": "integer", 
+            "id": "DocNo"
           }, 
           {
-            "type": "string", 
+            "type": "number", 
             "id": "Amount"
           }, 
           {
-            "type": "string", 
+            "type": "date", 
             "id": "Date"
+          },
+          {
+            "type": "string", 
+            "description": "Source file and line where this data came from in form {line-no}-{filename-minus-.csv}",
+            "id": "Source"
           }
         ]
       }
