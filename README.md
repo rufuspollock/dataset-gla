@@ -6,9 +6,27 @@ See also this blog post <http://schoolofdata.org/2013/03/26/using-sql-for-lightw
 
 ## Data
 
-See data/consolidated.csv for the schema see datapackage.json.
+Consolidated data is in `data/all.csv`. For the schema see `datapackage.json`.
 
 ## Data Preparation
+
+Do the following steps:
+
+1. Pull down a copy of the data:
+
+        node scripts/scrape.js
+
+2. Symlink the directory with the downloaded data to archive/latest
+
+        ln -s archive/{current-date} archive/latest
+
+3. Clean the data
+
+        node scripts/process.js
+
+### Some Background
+
+**<rant>This data is pretty horrible. In the current 65 files (summer 2013) one can find approximately 20+ different structures of the CSV files. See `scripts/process.js` for the gory details.</rant>**
 
 CSV files are listed on <http://www.london.gov.uk/mayor-assembly/gla/spending-money-wisely/budget-expenditure-charges/expenditure-over-250>
 

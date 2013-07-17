@@ -68,7 +68,7 @@ function cleanup() {
 
     csv()
       .from.array(alldata)
-      .to.path('data/consolidated.csv')
+      .to.path('data/all.csv')
       .to.options({columns: headings, header: true})
   }
 }
