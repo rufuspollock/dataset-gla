@@ -12,7 +12,7 @@
   }],
   "resources": [
     {
-      "path": "data/consolidated.csv",
+      "path": "data/all.csv",
       "schema": {
         "fields": [
           {
